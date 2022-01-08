@@ -1,6 +1,6 @@
 package com.example.location_voiture_backend.security.jwt;
 
-import com.example.rh.security.services.UserDetailsImpl;
+import com.example.location_voiture_backend.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

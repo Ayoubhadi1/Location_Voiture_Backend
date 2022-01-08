@@ -1,6 +1,6 @@
 package com.example.location_voiture_backend.security.jwt;
 
-import com.example.rh.security.services.UserDetailsServiceImpl;
+import com.example.location_voiture_backend.security.services.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

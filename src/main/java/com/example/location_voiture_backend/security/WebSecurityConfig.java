@@ -1,8 +1,8 @@
 package com.example.location_voiture_backend.security;
 
-import com.example.rh.security.jwt.AuthEntryPointJwt;
-import com.example.rh.security.jwt.AuthTokenFilter;
-import com.example.rh.security.services.UserDetailsServiceImpl;
+import com.example.location_voiture_backend.security.jwt.AuthEntryPointJwt;
+import com.example.location_voiture_backend.security.jwt.AuthTokenFilter;
+import com.example.location_voiture_backend.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,8 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable()
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.authorizeRequests().antMatchers("/gestionRH/auth/**").permitAll()
-			.antMatchers("/gestionRH/home/**","/gestionRH/offreEmploi/**" , "/offreEmplois/**" , "/users/**" , "/gestionRH/all" , "/gestionRH/roles").permitAll()
+			.authorizeRequests().antMatchers("/gestionlocation_voiture_backend/auth/**").permitAll()
+			.antMatchers("/gestionlocation_voiture_backend/home/**","/gestionlocation_voiture_backend/offreEmploi/**" , "/offreEmplois/**" , "/users/**" , "/gestionlocation_voiture_backend/all" , "/gestionlocation_voiture_backend/roles").permitAll()
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
