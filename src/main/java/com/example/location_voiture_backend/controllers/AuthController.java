@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/gestionLocationVoiture/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 	@Autowired
 	AuthenticationManager authenticationManager;
