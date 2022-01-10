@@ -38,15 +38,17 @@ public class MainController {
 	
 
 	
-	@GetMapping("/all")
-	public String allAccess() {
-		return "Public Content.";
-	}
+
 	
 	@GetMapping("/roles")
 	public String[] roles() {
 		
 	    return ERole.names() ;
+	}
+
+	@GetMapping("/all")
+	public String allAccess() {
+		return "Public Content.";
 	}
 	
 	@GetMapping("/user")
@@ -60,8 +62,8 @@ public class MainController {
 
 	
 	@GetMapping("/agent")
-	@PreAuthorize("hasRole('AGENT')")
-	public String moderatorAccess() {
+	@PreAuthorize("hasRole('AGENT') or hasRole('ADMIN')")
+	public String agentAccess() {
 		return "Agent Board.";
 	}
 	
