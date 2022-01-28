@@ -1,5 +1,7 @@
 package com.example.location_voiture_backend.controllers;
 
+import com.example.location_voiture_backend.entities.Image;
+import com.example.location_voiture_backend.repositories.ImageRepository;
 import com.example.location_voiture_backend.repositories.RoleRepository;
 import com.example.location_voiture_backend.repositories.UserRepository;
 import com.example.location_voiture_backend.entities.ERole;
@@ -12,6 +14,8 @@ import com.example.location_voiture_backend.payload.response.MessageResponse;
 import com.example.location_voiture_backend.security.jwt.JwtUtils;
 import com.example.location_voiture_backend.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +23,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -44,6 +52,9 @@ public class AuthController {
 
 	@Autowired
 	JwtUtils jwtUtils;
+
+	@Autowired
+	ImageRepository imageRepository;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -83,7 +94,16 @@ public class AuthController {
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
 							 signUpRequest.getEmail(),
-							 encoder.encode(signUpRequest.getPassword()));
+							 encoder.encode(signUpRequest.getPassword()),
+				 			 signUpRequest.getNom(),
+							signUpRequest.getPrenom(),
+							signUpRequest.getTelephone(),
+							signUpRequest.getImage(),
+							signUpRequest.getAgrement(),
+							signUpRequest.getAdresse(),
+							signUpRequest.getVille(),
+							signUpRequest.getPays()
+							);
 		user.setActive(true);
 
 		Set<String> strRoles = signUpRequest.getRole();
@@ -120,5 +140,40 @@ public class AuthController {
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	@PostMapping("/upload/image")
+	public ResponseEntity<MessageResponse> uplaodImage(@RequestParam("image") MultipartFile file)
+			throws IOException {
+
+		imageRepository.save(Image.builder()
+				.name(file.getOriginalFilename())
+				.type(file.getContentType())
+				.image(ImageUtility.compressImage(file.getBytes())).build());
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new MessageResponse("Image uploaded successfully: " +
+						file.getOriginalFilename()));
+	}
+
+	@GetMapping(path = {"/get/image/info/{name}"})
+	public Image getImageDetails(@PathVariable("name") String name) throws IOException {
+
+		final Optional<Image> dbImage = imageRepository.findByName(name);
+
+		return Image.builder()
+				.name(dbImage.get().getName())
+				.type(dbImage.get().getType())
+				.image(ImageUtility.decompressImage(dbImage.get().getImage())).build();
+	}
+
+	@GetMapping(path = {"/get/image/{name}"})
+	public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
+
+		final Optional<Image> dbImage = imageRepository.findByName(name);
+
+		return ResponseEntity
+				.ok()
+				.contentType(MediaType.valueOf(dbImage.get().getType()))
+				.body(ImageUtility.decompressImage(dbImage.get().getImage()));
 	}
 }

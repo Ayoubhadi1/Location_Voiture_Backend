@@ -91,8 +91,19 @@ public class User implements Serializable{
 	}
 
 
-	public User(Long id, String username, String nom, String prenom, String email, String password, Set<Role> roles, String telephone, String image, boolean active, String agrement, String adresse, String ville, String pays, Date dateDebutEssai, Date finAbonnement) {
-		this.id = id;
+	public User(
+				@NotBlank @Size(max = 20) String username,
+				@NotBlank @Size(max = 50) @Email String email,
+				@NotBlank @Size(max = 120) String password,
+				String nom,
+				String prenom,
+				String telephone,
+				String image,
+				String agrement,
+				String adresse,
+				String ville,
+				String pays) {
+
 		this.username = username;
 		this.nom = nom;
 		this.prenom = prenom;
@@ -112,7 +123,7 @@ public class User implements Serializable{
 
 	public User(Long id, @NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
 				@NotBlank @Size(max = 120) String password, Set<Role> roles, String image, boolean active, String domaine,
-				String poste, int salaire) {
+				String poste) {
 		super();
 		this.id = id;
 		this.username = username;
