@@ -1,5 +1,6 @@
 package com.example.location_voiture_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +28,9 @@ public class Image {
 
     @Column(name = "image", unique = false, nullable = false, length = 100000)
     private byte[] image;
+
+
+    @OneToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private User user;
 }

@@ -98,11 +98,13 @@ public class AuthController {
 				 			 signUpRequest.getNom(),
 							signUpRequest.getPrenom(),
 							signUpRequest.getTelephone(),
-							signUpRequest.getImage(),
+							null,
 							signUpRequest.getAgrement(),
 							signUpRequest.getAdresse(),
 							signUpRequest.getVille(),
-							signUpRequest.getPays()
+							signUpRequest.getPays(),
+							null,
+							null
 							);
 		user.setActive(true);
 
@@ -139,7 +141,7 @@ public class AuthController {
 		user.setRoles(roles);
 		userRepository.save(user);
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(user);
 	}
 
 	@PostMapping("/upload/image")
@@ -150,6 +152,25 @@ public class AuthController {
 				.name(file.getOriginalFilename())
 				.type(file.getContentType())
 				.image(ImageUtility.compressImage(file.getBytes())).build());
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new MessageResponse("Image uploaded successfully: " +
+						file.getOriginalFilename()));
+	}
+
+	@PostMapping("/uploadImage/{idUser}")
+	public ResponseEntity<MessageResponse> uploadImageUser(@RequestParam("image") MultipartFile file , @PathVariable int idUser)
+			throws IOException {
+
+		Image image = Image.builder()
+				.name(file.getOriginalFilename())
+				.type(file.getContentType())
+				.image(ImageUtility.compressImage(file.getBytes())).build();
+		//image.setUser(userRepository.getById(Long.parseLong(String.valueOf(idUser))));
+		User u = userRepository.getById(Long.parseLong(String.valueOf(idUser)));
+		imageRepository.save(image);
+		u.setImageProfil(image);
+		userRepository.save(u);
+
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new MessageResponse("Image uploaded successfully: " +
 						file.getOriginalFilename()));
