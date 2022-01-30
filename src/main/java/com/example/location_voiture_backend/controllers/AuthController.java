@@ -1,12 +1,9 @@
 package com.example.location_voiture_backend.controllers;
 
-import com.example.location_voiture_backend.entities.Image;
+import com.example.location_voiture_backend.entities.*;
 import com.example.location_voiture_backend.repositories.ImageRepository;
 import com.example.location_voiture_backend.repositories.RoleRepository;
 import com.example.location_voiture_backend.repositories.UserRepository;
-import com.example.location_voiture_backend.entities.ERole;
-import com.example.location_voiture_backend.entities.Role;
-import com.example.location_voiture_backend.entities.User;
 import com.example.location_voiture_backend.payload.request.LoginRequest;
 import com.example.location_voiture_backend.payload.request.SignupRequest;
 import com.example.location_voiture_backend.payload.response.JwtResponse;
@@ -26,12 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -98,12 +92,10 @@ public class AuthController {
 				 			 signUpRequest.getNom(),
 							signUpRequest.getPrenom(),
 							signUpRequest.getTelephone(),
-							null,
 							signUpRequest.getAgrement(),
 							signUpRequest.getAdresse(),
 							signUpRequest.getVille(),
 							signUpRequest.getPays(),
-							null,
 							null
 							);
 		user.setActive(true);
@@ -145,41 +137,54 @@ public class AuthController {
 	}
 
 	@PostMapping("/upload/image")
-	public ResponseEntity<MessageResponse> uplaodImage(@RequestParam("image") MultipartFile file)
+	public ResponseEntity<MessageResponse> uplaodImage(@RequestParam("image") MultipartFile file )
 			throws IOException {
 
 		imageRepository.save(Image.builder()
 				.name(file.getOriginalFilename())
 				.type(file.getContentType())
 				.image(ImageUtility.compressImage(file.getBytes())).build());
+
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new MessageResponse("Image uploaded successfully: " +
 						file.getOriginalFilename()));
 	}
 
 	@PostMapping("/uploadImage/{idUser}")
-	public ResponseEntity<MessageResponse> uploadImageUser(@RequestParam("image") MultipartFile file , @PathVariable int idUser)
+	public ResponseEntity<MessageResponse> uploadImageUser(@RequestParam("image") MultipartFile file ,
+														   @PathVariable int idUser ,
+														   @RequestHeader Map<String, String> headers)
 			throws IOException {
 
 		Image image = Image.builder()
 				.name(file.getOriginalFilename())
 				.type(file.getContentType())
 				.image(ImageUtility.compressImage(file.getBytes())).build();
+		if(headers.get("typeimage").equals("profilImage")){ image.setTypeImage(TypeImage.PROFIL_IMAGE);}
+		else if(headers.get("typeimage").equals("cinRecto")){ image.setTypeImage(TypeImage.CIN_RECTO);}
+		else if(headers.get("typeimage").equals("cinVerso")){ image.setTypeImage(TypeImage.CIN_VERSO);}
+
 		//image.setUser(userRepository.getById(Long.parseLong(String.valueOf(idUser))));
 		User u = userRepository.getById(Long.parseLong(String.valueOf(idUser)));
+		image.setUser(u);
 		imageRepository.save(image);
-		u.setImageProfil(image);
-		userRepository.save(u);
+
+
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new MessageResponse("Image uploaded successfully: " +
 						file.getOriginalFilename()));
 	}
 
-	@GetMapping(path = {"/get/image/info/{name}"})
-	public Image getImageDetails(@PathVariable("name") String name) throws IOException {
+	@GetMapping("/test2")
+	public String test2(@RequestHeader Map<String, String> headers){
+		return headers.get("typeImage");
+	}
 
-		final Optional<Image> dbImage = imageRepository.findByName(name);
+	@GetMapping(path = {"/get/imageProfil/info/{idUser}"})
+	public Image getImageDetails(@PathVariable("idUser") int idUser) throws IOException {
+
+		final Optional<Image> dbImage = imageRepository.findByUserIdAndAndTypeImage(Long.parseLong(String.valueOf(idUser)) , TypeImage.valueOf("PROFIL_IMAGE"));
 
 		return Image.builder()
 				.name(dbImage.get().getName())
@@ -187,10 +192,10 @@ public class AuthController {
 				.image(ImageUtility.decompressImage(dbImage.get().getImage())).build();
 	}
 
-	@GetMapping(path = {"/get/image/{name}"})
-	public ResponseEntity<byte[]> getImage(@PathVariable("name") String name) throws IOException {
+	@GetMapping(path = {"/get/profileImage/{idUser}"})
+	public ResponseEntity<byte[]> getImage(@PathVariable("idUser") int idUser) throws IOException {
 
-		final Optional<Image> dbImage = imageRepository.findByName(name);
+		final Optional<Image> dbImage = imageRepository.findByUserIdAndAndTypeImage(Long.parseLong(String.valueOf(idUser)) , TypeImage.valueOf("PROFIL_IMAGE"));
 
 		return ResponseEntity
 				.ok()

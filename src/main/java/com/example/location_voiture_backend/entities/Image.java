@@ -29,8 +29,10 @@ public class Image {
     @Column(name = "image", unique = false, nullable = false, length = 100000)
     private byte[] image;
 
+    @Enumerated(EnumType.STRING)
+    private TypeImage typeImage;
 
-    @OneToOne
+    @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 }

@@ -51,9 +51,6 @@ public class User implements Serializable{
 	private Set<Role> roles;
 	private String telephone;
 
-	@OneToOne(mappedBy = "user")
-	private Image imageProfil ;
-
 	private boolean active;
 	private String agrement;
 	private String adresse;
@@ -80,11 +77,9 @@ public class User implements Serializable{
 	@ManyToOne
 	private Pack pack;
 
-	@OneToOne(mappedBy = "user")
-	private Image cinRecto;
+	@OneToMany(mappedBy = "user")
+	private Collection<Image> images;
 
-	@OneToOne(mappedBy = "user")
-	private Image cinVerso;
 
 
 	public User() {
@@ -107,13 +102,12 @@ public class User implements Serializable{
 				String nom,
 				String prenom,
 				String telephone,
-				Image image,
 				String agrement,
 				String adresse,
 				String ville,
 				String pays,
-				Image cinRecto,
-				Image cinVerso) {
+				Collection<Image> images
+				) {
 
 		this.username = username;
 		this.nom = nom;
@@ -122,7 +116,7 @@ public class User implements Serializable{
 		this.password = password;
 		this.roles = roles;
 		this.telephone = telephone;
-		this.imageProfil = image;
+
 		this.active = active;
 		this.agrement = agrement;
 		this.adresse = adresse;
@@ -130,35 +124,30 @@ public class User implements Serializable{
 		this.pays = pays;
 		this.dateDebutEssai = dateDebutEssai;
 		this.finAbonnement = finAbonnement;
-		this.cinRecto = cinRecto;
-		this.cinVerso = cinVerso;
+		this.images = images;
 	}
 
 	public User(Long id, @NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
-				@NotBlank @Size(max = 120) String password, Set<Role> roles, Image image, boolean active, String domaine,
-				String poste , Image cinRecto, Image cinVerso) {
+				@NotBlank @Size(max = 120) String password, Set<Role> roles, boolean active,
+				String poste , Collection<Image> images) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
 		this.roles = roles;
-		this.imageProfil = image;
 		this.active = active;
-		this.cinRecto = cinRecto;
-		this.cinVerso = cinVerso;
+		this.images = images;
 	}
 	
 	public User( @NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
-			@NotBlank @Size(max = 120) String password,  Image image , Image cinRecto, Image cinVerso) {
+			@NotBlank @Size(max = 120) String password,  Collection<Image> images) {
 		super();
 		
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.imageProfil = image;
-		this.cinRecto = cinRecto;
-		this.cinVerso = cinVerso;
+		this.images = images;
 
 	}
 
