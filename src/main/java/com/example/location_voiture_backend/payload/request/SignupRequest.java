@@ -29,7 +29,6 @@ public class SignupRequest {
     private String telephone;
     private String image ;
     private boolean active;
-    private String agrement;
     private String adresse;
     private String ville;
     private String pays;
@@ -78,9 +77,6 @@ public class SignupRequest {
         return active;
     }
 
-    public String getAgrement() {
-        return agrement;
-    }
 
     public String getAdresse() {
         return adresse;
@@ -136,10 +132,6 @@ public class SignupRequest {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public void setAgrement(String agrement) {
-        this.agrement = agrement;
     }
 
     public void setAdresse(String adresse) {

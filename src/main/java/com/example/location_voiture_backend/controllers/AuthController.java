@@ -64,11 +64,14 @@ public class AuthController {
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
+		User u = userRepository.findById(userDetails.getId()).get();
+
 		return ResponseEntity.ok(new JwtResponse(jwt, 
 												 userDetails.getId(), 
 												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 roles));
+												 userDetails.getEmail(),
+												 roles,
+											     u.getImages()));
 	}
 
 	@PostMapping("/signup")
@@ -92,7 +95,6 @@ public class AuthController {
 				 			 signUpRequest.getNom(),
 							signUpRequest.getPrenom(),
 							signUpRequest.getTelephone(),
-							signUpRequest.getAgrement(),
 							signUpRequest.getAdresse(),
 							signUpRequest.getVille(),
 							signUpRequest.getPays(),
@@ -163,6 +165,8 @@ public class AuthController {
 		if(headers.get("typeimage").equals("profilImage")){ image.setTypeImage(TypeImage.PROFIL_IMAGE);}
 		else if(headers.get("typeimage").equals("cinRecto")){ image.setTypeImage(TypeImage.CIN_RECTO);}
 		else if(headers.get("typeimage").equals("cinVerso")){ image.setTypeImage(TypeImage.CIN_VERSO);}
+		else if(headers.get("typeimage").equals("agrement")){ image.setTypeImage(TypeImage.AGREMENT);}
+
 
 		//image.setUser(userRepository.getById(Long.parseLong(String.valueOf(idUser))));
 		User u = userRepository.getById(Long.parseLong(String.valueOf(idUser)));

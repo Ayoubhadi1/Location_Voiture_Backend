@@ -52,7 +52,6 @@ public class User implements Serializable{
 	private String telephone;
 
 	private boolean active;
-	private String agrement;
 	private String adresse;
 	private String ville;
 	private String pays;
@@ -102,7 +101,6 @@ public class User implements Serializable{
 				String nom,
 				String prenom,
 				String telephone,
-				String agrement,
 				String adresse,
 				String ville,
 				String pays,
@@ -118,7 +116,7 @@ public class User implements Serializable{
 		this.telephone = telephone;
 
 		this.active = active;
-		this.agrement = agrement;
+
 		this.adresse = adresse;
 		this.ville = ville;
 		this.pays = pays;
